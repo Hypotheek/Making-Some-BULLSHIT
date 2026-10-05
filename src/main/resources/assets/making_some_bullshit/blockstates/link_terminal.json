@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "making_some_bullshit:block/link_terminal" },
+    "facing=east":  { "model": "making_some_bullshit:block/link_terminal", "y": 90 },
+    "facing=south": { "model": "making_some_bullshit:block/link_terminal", "y": 180 },
+    "facing=west":  { "model": "making_some_bullshit:block/link_terminal", "y": 270 }
+  }
+}

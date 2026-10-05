@@ -24,7 +24,7 @@ public final class ClientEvents {
         Minecraft minecraft = Minecraft.getInstance();
         while (ClientSetup.OPEN_LINKS.consumeClick()) {
             if (minecraft.player != null) {
-                minecraft.setScreen(new EmcLinksScreen());
+                minecraft.setScreen(new EmcLinksScreen(new PlayerLinkSource()));
             }
         }
     }
