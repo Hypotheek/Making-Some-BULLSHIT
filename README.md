@@ -3,7 +3,7 @@
 A ProjectE addon for Minecraft 1.20.1 (Forge 47.4.0) by Hypotheek.
 
 Planned: an interface that lists the EMC links you have running and what they cost you. Right now the mod
-loads and does nothing; this is the scaffold to build that on.
+loads and shows that using K as a keybind, and the debug commands can be ran by doing `/bullshit`
 
 ## Run it
 
