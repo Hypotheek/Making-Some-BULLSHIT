@@ -1,0 +1,160 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+// Mojang ships Java 17 to end users in 1.18+, so the mod targets Java 17.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+
+    // Needed for this setup: resources (mods.toml etc.) are expanded before the game launches.
+    copyIdeResources = true
+
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'info'
+
+            // Dependency mods (Architectury, KubeJS, ...) ship mixins with obfuscated refmaps.
+            // These make Mixin translate them to the dev mappings so those mods can load.
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
+            // In the dev environment the mod isn't a jar, so its own mixin config has to be registered here.
+            // The built jar declares it through the MixinConfigs manifest attribute instead.
+            args "-mixin.config=${mod_id}.mixins.json"
+
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            property 'forge.enabledGameTestNamespaces', mod_id
+            // A modded client plus ProjectE's EMC calculation outgrows Gradle's default 512M heap.
+            jvmArgs '-Xmx4G'
+        }
+
+        server {
+            property 'forge.enabledGameTestNamespaces', mod_id
+            args '--nogui'
+            jvmArgs '-Xmx4G'
+        }
+
+        gameTestServer {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+
+        data {
+            workingDirectory project.file('run-data')
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+// Every mod comes from CurseForge by the exact file ID in the pack's manifest (see gradle.properties).
+// Don't use exclusiveContent here: it also locks out ForgeGradle's own deobfuscation repository,
+// which is what has to serve the remapped fg.deobf() artifacts for this group.
+repositories {
+    maven {
+        name = 'Curse Maven'
+        url = 'https://www.cursemaven.com'
+        content {
+            includeGroup 'curse.maven'
+        }
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // fg.deobf() remaps each mod jar to the dev mappings so it can be compiled and run against.
+
+    // Compile + runtime: the addon builds directly on these APIs.
+    implementation fg.deobf("curse.maven:projecte-226410:${projecte_file_id}")
+    implementation fg.deobf("curse.maven:project-expansion-579177:${project_expansion_file_id}")
+
+    // Runtime only: present in the pack, so present in the dev instance, but not coded against.
+    runtimeOnly fg.deobf("curse.maven:team-projecte-689273:${team_projecte_file_id}")
+    runtimeOnly fg.deobf("curse.maven:kubejs-projecte-fork-1063228:${kubejs_projecte_fork_file_id}")
+
+    // KubeJS ProjectE Fork needs KubeJS, which needs Rhino and Architectury.
+    runtimeOnly fg.deobf("curse.maven:kubejs-238086:${kubejs_file_id}")
+    runtimeOnly fg.deobf("curse.maven:rhino-416294:${rhino_file_id}")
+    runtimeOnly fg.deobf("curse.maven:architectury-api-419699:${architectury_file_id}")
+
+    // ProjectE and Project Expansion both add Curios integration when it is present.
+    runtimeOnly fg.deobf("curse.maven:curios-309927:${curios_file_id}")
+}
+
+// Expands ${...} placeholders in mods.toml and pack.mcmeta from gradle.properties.
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+            forge_version: forge_version, forge_version_range: forge_version_range,
+            loader_version_range: loader_version_range,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_authors: mod_authors, mod_description: mod_description,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : mod_authors,
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : mod_authors,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'MixinConfigs'            : "${mod_id}.mixins.json"
+        ])
+    }
+
+    // Reobfuscates the jar so it loads outside the dev environment.
+    finalizedBy 'reobfJar'
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

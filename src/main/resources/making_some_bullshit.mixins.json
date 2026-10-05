@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.hypotheek.makingsomebullshit.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "EmcLinkItemHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

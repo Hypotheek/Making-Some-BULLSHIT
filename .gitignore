@@ -1,0 +1,30 @@
+# Gradle
+.gradle/
+build/
+
+# Dev instance
+run/
+run-data/
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+bin/
+out/
+eclipse/
+
+# Local publishing target
+mcmodsrepo/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Unneccessary files
+/docs
