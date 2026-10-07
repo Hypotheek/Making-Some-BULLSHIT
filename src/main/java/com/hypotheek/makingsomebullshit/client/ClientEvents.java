@@ -18,18 +18,6 @@ public final class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
-
-        Minecraft minecraft = Minecraft.getInstance();
-        while (ClientSetup.OPEN_LINKS.consumeClick()) {
-            if (minecraft.player != null) {
-                minecraft.setScreen(new EmcLinksScreen());
-            }
-        }
-    }
-
-    @SubscribeEvent
     public static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
         ClientLinkData.setLinks(List.of());
     }

@@ -1,0 +1,6 @@
+{
+  "parent": "making_some_bullshit:block/link_terminal_orb",
+  "textures": {
+    "orb": "making_some_bullshit:block/terminal_orb_off"
+  }
+}

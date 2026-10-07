@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:block",
+  "pools": [{
+    "rolls": 1,
+    "entries": [{ "type": "minecraft:item", "name": "making_some_bullshit:link_terminal" }],
+    "conditions": [{ "condition": "minecraft:survives_explosion" }]
+  }]
+}

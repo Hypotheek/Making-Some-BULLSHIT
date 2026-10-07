@@ -6,7 +6,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public final class Network {
-    private static final String PROTOCOL_VERSION = "1";
+    private static final String PROTOCOL_VERSION = "2";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             ResourceLocation.fromNamespaceAndPath(MakingSomeBullshit.MOD_ID, "main"),
@@ -21,5 +21,6 @@ public final class Network {
     public static void register() {
         CHANNEL.registerMessage(0, LinksSyncPacket.class, LinksSyncPacket::encode, LinksSyncPacket::decode, LinksSyncPacket::handle);
         CHANNEL.registerMessage(1, RequestLinksPacket.class, RequestLinksPacket::encode, RequestLinksPacket::decode, RequestLinksPacket::handle);
+        CHANNEL.registerMessage(2, OpenLinksScreenPacket.class, OpenLinksScreenPacket::encode, OpenLinksScreenPacket::decode, OpenLinksScreenPacket::handle);
     }
 }

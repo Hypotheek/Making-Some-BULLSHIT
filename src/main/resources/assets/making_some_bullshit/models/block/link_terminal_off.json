@@ -1,0 +1,6 @@
+{
+  "parent": "making_some_bullshit:block/link_terminal",
+  "textures": {
+    "screen": "making_some_bullshit:block/flat_screen_off"
+  }
+}

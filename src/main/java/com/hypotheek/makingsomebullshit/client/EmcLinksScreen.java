@@ -1,15 +1,10 @@
 package com.hypotheek.makingsomebullshit.client;
 
-import com.hypotheek.makingsomebullshit.net.ClientLinkData;
 import com.hypotheek.makingsomebullshit.net.LinkSnapshot;
-import com.hypotheek.makingsomebullshit.net.Network;
-import com.hypotheek.makingsomebullshit.net.RequestLinksPacket;
 import com.mojang.blaze3d.platform.NativeImage;
 import cool.furry.mc.forge.projectexpansion.block.BlockEMCLink;
 import cool.furry.mc.forge.projectexpansion.util.EMCFormat;
 import cool.furry.mc.forge.projectexpansion.util.Matter;
-import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
-import moze_intel.projecte.api.capabilities.PECapabilities;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -35,8 +30,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
-
-import static com.hypotheek.makingsomebullshit.command.DebugCommand.number;
 
 public class EmcLinksScreen extends Screen {
     private static final int REFRESH_TICKS = 20;
@@ -88,8 +81,10 @@ public class EmcLinksScreen extends Screen {
     private int visibleRows;
     private List<Component> graphTooltip;
 
-    public EmcLinksScreen() {
+    private final LinkSource source;
+    public EmcLinksScreen(LinkSource source) {
         super(Component.literal("EMC Links"));
+        this.source = source;
     }
 
     @Override
@@ -98,17 +93,17 @@ public class EmcLinksScreen extends Screen {
     }
 
     private void requestLinks() {
-        Network.CHANNEL.sendToServer(new RequestLinksPacket());
+        source.requestRefresh();
         ticksUntilRefresh = REFRESH_TICKS;
     }
 
     @Override
     public void tick() {
-        List<LinkSnapshot> links = ClientLinkData.getLinks();
+        List<LinkSnapshot> links = source.getLinks();
         double net = totalGained(links) - totalSpent(links);
-        showNet += (net - showNet) * 0.3;
+        showNet += (net - showNet) * 0.1;
 
-        if (--ticksUntilRefresh <= 0) {
+        if(--ticksUntilRefresh <= 0) {
             requestLinks();
             netHistory.addLast(net);
             while (netHistory.size() > HISTORY_SIZE) netHistory.removeFirst();
@@ -134,7 +129,7 @@ public class EmcLinksScreen extends Screen {
         double spent = totalSpent(links);
         double gained = totalGained(links);
         double net = gained - spent;
-        BigInteger balance = balance();
+        BigInteger balance = source.getBalance();
         int summaryY = top + TITLE_HEIGHT + 8;
 
         int netColor = net >= 0 ? GAINED_COLOR : SPENT_COLOR;
@@ -304,7 +299,7 @@ public class EmcLinksScreen extends Screen {
     }
 
     private List<LinkSnapshot> sorted() {
-        List<LinkSnapshot> links = ClientLinkData.getLinks();
+        List<LinkSnapshot> links = source.getLinks();
         if (links == sortedSource && sort == sortedBy && descending == sortedDescending) return sortedCache;
 
         Comparator<LinkSnapshot> comparator = switch (sort) {
@@ -328,11 +323,6 @@ public class EmcLinksScreen extends Screen {
 
     private static double totalGained(List<LinkSnapshot> links) {
         return links.stream().mapToDouble(LinkSnapshot::emcGain).sum();
-    }
-
-    private static BigInteger balance() {
-        if (Minecraft.getInstance().player == null) return BigInteger.ZERO;
-        return Minecraft.getInstance().player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY).map(IKnowledgeProvider::getEmc).orElse(BigInteger.ZERO);
     }
 
     private static int tierOrder(LinkSnapshot link) {
