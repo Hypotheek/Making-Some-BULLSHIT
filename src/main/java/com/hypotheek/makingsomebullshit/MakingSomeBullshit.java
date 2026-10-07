@@ -1,6 +1,7 @@
 package com.hypotheek.makingsomebullshit;
 
 import com.hypotheek.makingsomebullshit.net.Network;
+import com.hypotheek.makingsomebullshit.registry.ModBlockEntities;
 import com.hypotheek.makingsomebullshit.registry.ModBlocks;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.common.MinecraftForge;
@@ -25,6 +26,7 @@ public class MakingSomeBullshit {
 
         ModBlocks.BLOCKS.register(modEventBus);
         ModBlocks.ITEMS.register(modEventBus);
+        ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
 
         // Game events (as opposed to mod lifecycle events) go on the Forge bus.
         MinecraftForge.EVENT_BUS.register(this);

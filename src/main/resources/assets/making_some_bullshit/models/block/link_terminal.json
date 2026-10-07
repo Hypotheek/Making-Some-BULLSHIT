@@ -81,20 +81,6 @@
 			}
 		},
 		{
-			"name": "crystal",
-			"from": [7, 14, 9],
-			"to": [9, 16, 11],
-			"shade_direction_override": "up",
-			"rotation": {"angle": 45, "axis": "y", "origin": [8, 14, 10]},
-			"faces": {
-				"north": {"uv": [0, 0, 16, 16], "texture": "#orb"},
-				"east": {"uv": [0, 0, 16, 16], "texture": "#orb"},
-				"south": {"uv": [0, 0, 16, 16], "texture": "#orb"},
-				"west": {"uv": [0, 0, 16, 16], "texture": "#orb"},
-				"up": {"uv": [0, 0, 16, 16], "texture": "#orb"}
-			}
-		},
-		{
 			"name": "keys",
 			"from": [4, 5, 1.5],
 			"to": [12, 5.5, 5],

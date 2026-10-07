@@ -15,7 +15,9 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -30,7 +32,7 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LinkTerminalBlock extends Block {
+public class LinkTerminalBlock extends Block implements EntityBlock {
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public LinkTerminalBlock(Properties properties) {
@@ -41,6 +43,11 @@ public class LinkTerminalBlock extends Block {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, LIT);
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new LinkTerminalBlockEntity(pos, state);
     }
 
     // The model's screen is on its north side. The base is the same every way round; the body behind it is turned to each facing.
