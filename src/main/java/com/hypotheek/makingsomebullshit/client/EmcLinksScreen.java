@@ -31,8 +31,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static com.hypotheek.makingsomebullshit.command.DebugCommand.number;
-
 public class EmcLinksScreen extends Screen {
     private static final int REFRESH_TICKS = 20;
     private static final int HISTORY_SIZE = 60;

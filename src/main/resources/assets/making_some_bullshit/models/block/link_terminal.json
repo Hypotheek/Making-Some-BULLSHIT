@@ -7,7 +7,8 @@
 		"metal": "making_some_bullshit:block/terminal_metal",
 		"trim": "making_some_bullshit:block/flat_trim",
 		"screen": "making_some_bullshit:block/flat_screen",
-		"keys": "making_some_bullshit:block/flat_keys"
+		"keys": "making_some_bullshit:block/flat_keys",
+		"orb": "making_some_bullshit:block/terminal_orb"
 	},
 	"elements": [
 		{
@@ -86,11 +87,11 @@
 			"shade_direction_override": "up",
 			"rotation": {"angle": 45, "axis": "y", "origin": [8, 14, 10]},
 			"faces": {
-				"north": {"uv": [0, 0, 16, 16], "texture": "#trim"},
-				"east": {"uv": [0, 0, 16, 16], "texture": "#trim"},
-				"south": {"uv": [0, 0, 16, 16], "texture": "#trim"},
-				"west": {"uv": [0, 0, 16, 16], "texture": "#trim"},
-				"up": {"uv": [0, 0, 16, 16], "texture": "#trim"}
+				"north": {"uv": [0, 0, 16, 16], "texture": "#orb"},
+				"east": {"uv": [0, 0, 16, 16], "texture": "#orb"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#orb"},
+				"west": {"uv": [0, 0, 16, 16], "texture": "#orb"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#orb"}
 			}
 		},
 		{

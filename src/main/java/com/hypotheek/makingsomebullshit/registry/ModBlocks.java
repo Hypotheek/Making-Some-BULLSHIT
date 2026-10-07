@@ -16,7 +16,7 @@ public final class ModBlocks {
             DeferredRegister.create(ForgeRegistries.ITEMS, MakingSomeBullshit.MOD_ID);
 
     public static final RegistryObject<Block> LINK_TERMINAL = BLOCKS.register("link_terminal", () -> new
-            LinkTerminalBlock(Block.Properties.of().strength(2.0f).requiresCorrectToolForDrops().noOcclusion()));
+            LinkTerminalBlock(Block.Properties.of().strength(2.0f).requiresCorrectToolForDrops().noOcclusion().lightLevel(state -> state.getValue(LinkTerminalBlock.LIT) ? 15 : 0)));
 
     public static final RegistryObject<Item> LINK_TERMINAL_ITEM = ITEMS.register("link_terminal", () -> new
             BlockItem(LINK_TERMINAL.get(), new Item.Properties()));
